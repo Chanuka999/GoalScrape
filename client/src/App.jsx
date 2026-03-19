@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
-  Trophy, Search, RefreshCcw, Play, BarChart3, Star, Clock, ChevronRight, User, X, ShieldCheck, Loader2, Activity
+  Trophy, Search, RefreshCcw, Play, BarChart3, Star, Clock, ChevronRight, User, X, ShieldCheck, Loader2, Activity, Globe, ArrowLeft
 } from 'lucide-react';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, RadialLinearScale, PointElement, LineElement
@@ -18,6 +18,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [scraping, setScraping] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [appView, setAppView] = useState('dashboard');
   const [activeTab, setActiveTab] = useState('All');
   const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString());
   const [favorites, setFavorites] = useState(() => {
@@ -26,6 +27,104 @@ const App = () => {
   });
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
+
+  const WorldCupWidget = () => {
+    const [wcTimeLeft, setWcTimeLeft] = useState({d: 0, h: 0, m: 0, s: 0});
+
+    useEffect(() => {
+      const wcDate = new Date("2026-06-11T00:00:00Z").getTime();
+      const wcTimer = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = wcDate - now;
+        if (distance < 0) return clearInterval(wcTimer);
+        
+        setWcTimeLeft({
+          d: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          h: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          m: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          s: Math.floor((distance % (1000 * 60)) / 1000)
+        });
+      }, 1000);
+      return () => clearInterval(wcTimer);
+    }, []);
+
+    return (
+      <div className="wc-widget">
+         <div className="wc-header">
+             <Trophy size={32} className="wc-gold" />
+             <div className="wc-title-box">
+               <h2>FIFA WORLD CUP 26™</h2>
+               <p>NORTH AMERICA (USA • CANADA • MEXICO)</p>
+             </div>
+         </div>
+         <div className="wc-countdown">
+            <div className="time-block"><span className="val">{wcTimeLeft.d}</span> <span className="lbl">DAYS</span></div>
+            <div className="time-block"><span className="val">{wcTimeLeft.h}</span> <span className="lbl">HRS</span></div>
+            <div className="time-block"><span className="val">{wcTimeLeft.m}</span> <span className="lbl">MINS</span></div>
+            <div className="time-block"><span className="val">{wcTimeLeft.s}</span> <span className="lbl">SECS</span></div>
+         </div>
+         <div className="wc-footer">
+            <div className="pulse-green inline-pulse"></div> Phase: Global Regional Qualifiers Active
+         </div>
+      </div>
+    );
+  };
+
+  const WorldCupHistory = ({ onBack }) => {
+    const historyData = [
+      { year: 2022, host: "Qatar", winner: "Argentina", runnerUp: "France", score: "3 - 3 (4-2 p)", notable: "Messi's Masterpiece", img: "🇦🇷" },
+      { year: 2018, host: "Russia", winner: "France", runnerUp: "Croatia", score: "4 - 2", notable: "Mbappé Breakout", img: "🇫🇷" },
+      { year: 2014, host: "Brazil", winner: "Germany", runnerUp: "Argentina", score: "1 - 0 (aet)", notable: "Götze's Golden", img: "🇩🇪" },
+      { year: 2010, host: "South Africa", winner: "Spain", runnerUp: "Netherlands", score: "1 - 0 (aet)", notable: "Iniesta's Magic", img: "🇪🇸" },
+      { year: 2006, host: "Germany", winner: "Italy", runnerUp: "France", score: "1 - 1 (5-3 p)", notable: "Zidane's Farewell", img: "🇮🇹" },
+      { year: 2002, host: "Japan/KOR", winner: "Brazil", runnerUp: "Germany", score: "2 - 0", notable: "Ronaldo's Redemption", img: "🇧🇷" },
+      { year: 1998, host: "France", winner: "France", runnerUp: "Brazil", score: "3 - 0", notable: "Zidane's Double", img: "🇫🇷" },
+      { year: 1994, host: "USA", winner: "Brazil", runnerUp: "Italy", score: "0 - 0 (3-2 p)", notable: "Baggio's Miss", img: "🇧🇷" }
+    ];
+
+    return (
+      <div className="history-page">
+        <div className="history-header">
+           <button className="back-btn" onClick={onBack}>
+              <ArrowLeft size={20} style={{marginRight: '8px'}} /> Back to Hub
+           </button>
+           <div className="history-title-area">
+             <Trophy size={48} className="wc-gold" />
+             <h1>FIFA WORLD CUP™ ARCHIVE</h1>
+             <p>Relive the legendary finals that shaped football history.</p>
+           </div>
+        </div>
+        
+        <div className="history-grid">
+           {historyData.map(wc => (
+              <div key={wc.year} className="history-card">
+                 <div className="h-card-top">
+                   <div className="year-badge-hc">{wc.year}</div>
+                   <div className="host-country">Host: {wc.host}</div>
+                 </div>
+                 
+                 <div className="final-match-box">
+                    <div className="h-team winner">
+                      <span className="flag">{wc.img}</span> {wc.winner} <span className="crown" title="Champion">👑</span>
+                    </div>
+                    <div className="h-score-hub">
+                      <div className="fin-score">{wc.score}</div>
+                      <div className="decider">FINAL RESULT</div>
+                    </div>
+                    <div className="h-team runner">
+                      {wc.runnerUp}
+                    </div>
+                 </div>
+                 
+                 <div className="notable-moment">
+                   <Star size={12} className="wc-gold" style={{marginRight: '8px'}} /> {wc.notable}
+                 </div>
+              </div>
+           ))}
+        </div>
+      </div>
+    );
+  };
 
   // --- GOALSCRAPE AI LOGIC V7.0 ---
   const getAIAnalysis = (match) => {
@@ -199,22 +298,17 @@ const App = () => {
       const a = parseInt(scores[1]) || 0;
       const isFinished = match.Time.toLowerCase().includes('finished');
       
-      let maxMin = 90;
-      const timeNum = parseInt(match.Time.replace(/[^0-9]/g, ''));
-      if (!isNaN(timeNum) && timeNum > 0 && !isFinished) {
-        maxMin = Math.min(90, timeNum);
-      }
-      
       const seed = match['Home Team'] + match['Away Team'];
       let events = [];
       
-      for(let i=0; i<h; i++) events.push({ minute: pseudoRandom(seed, i*5, maxMin), team: 'home', type: 'goal' });
-      for(let i=0; i<a; i++) events.push({ minute: pseudoRandom(seed, i*7+11, maxMin), team: 'away', type: 'goal' });
+      // Fixed at 90 minutes so the timeline NEVER jitters or shifts randomly throughout the match!
+      for(let i=0; i<h; i++) events.push({ minute: pseudoRandom(seed, i*5, 90), team: 'home', type: 'goal' });
+      for(let i=0; i<a; i++) events.push({ minute: pseudoRandom(seed, i*7+11, 90), team: 'away', type: 'goal' });
       
       const cards = pseudoRandom(seed, 10, 4); // 1 to 4 yellow cards
       for(let i=0; i<cards; i++) {
           const t = pseudoRandom(seed, 20+i, 2) === 1 ? 'home' : 'away';
-          events.push({ minute: pseudoRandom(seed, 30+i, maxMin), team: t, type: 'yellow' });
+          events.push({ minute: pseudoRandom(seed, 30+i, 90), team: t, type: 'yellow' });
       }
       
       events.sort((ev1, ev2) => ev1.minute - ev2.minute);
@@ -437,8 +531,7 @@ const App = () => {
       </div>
     );
   };
-
-  const MAJOR_LEAGUES = ['Premier League', 'LaLiga', 'Serie A', 'Bundesliga', 'Ligue 1', 'Champions League'];
+  const MAJOR_LEAGUES = ['World Cup', 'Premier League', 'LaLiga', 'Serie A', 'Bundesliga', 'Ligue 1', 'Champions League'];
 
   const finalFilteredMatches = useMemo(() => {
     let base = matches.filter(match => 
@@ -519,7 +612,11 @@ const App = () => {
            </div>
            
            <button className={`action-btn analytics ${showAnalytics ? 'active' : ''}`} onClick={() => setShowAnalytics(!showAnalytics)}>
-             <BarChart3 size={20} /> <span>Analytics</span>
+             <BarChart3 size={20} /> <span className="hide-mobile">Analytics</span>
+           </button>
+
+           <button className={`action-btn analytics ${appView === 'history' ? 'active' : ''}`} onClick={() => setAppView(appView === 'history' ? 'dashboard' : 'history')}>
+             <Globe size={20} /> <span className="hide-mobile">WC Archive</span>
            </button>
 
            <button className={`action-btn scrape ${scraping ? 'loading' : ''}`} onClick={triggerScraper} disabled={scraping}>
@@ -529,7 +626,9 @@ const App = () => {
         </div>
       </header>
 
-      <div className="tabs-bar">
+      {appView === 'dashboard' ? (
+        <>
+          <div className="tabs-bar">
         {['All', 'Live', 'Finished', 'Standings'].map(tab => (
           <button 
             key={tab} 
@@ -570,6 +669,8 @@ const App = () => {
       </div>
 
       <main className="content">
+        {activeTab === 'All' && <WorldCupWidget />}
+        
         {showAnalytics && (
           <section className="analytics-section">
             <div className="chart-wrapper">
@@ -646,6 +747,10 @@ const App = () => {
           </>
         )}
       </main>
+        </>
+      ) : (
+        <WorldCupHistory onBack={() => setAppView('dashboard')} />
+      )}
 
       <AIAnalysisModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
     </div>

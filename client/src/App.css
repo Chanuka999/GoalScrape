@@ -19,8 +19,14 @@
   font-family: 'Outfit', sans-serif;
 }
 
+html {
+  overflow-y: scroll; /* Fix page shaking by keeping scrollbar always visible */
+}
+
 body {
-  background: var(--bg-dark);
+  background: linear-gradient(to bottom, rgba(10, 14, 20, 0.85), rgba(10, 14, 20, 0.95)), 
+              url('./assets/football_bg.png') no-repeat center center fixed;
+  background-size: cover;
   color: var(--text-main);
   overflow-x: hidden;
 }
@@ -792,4 +798,279 @@ body {
 .rel-zone .rank-badge {
   background: rgba(220, 38, 38, 0.2);
   color: #fc8181;
+}
+
+/* --- FIFA WORLD CUP 2026 WIDGET --- */
+.wc-widget {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(12, 18, 30, 0.8));
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px;
+  padding: 25px 30px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.wc-widget::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: radial-gradient(circle at top right, rgba(212, 175, 55, 0.1), transparent 400px);
+  pointer-events: none;
+}
+
+.wc-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+  z-index: 1;
+}
+
+.wc-gold {
+  color: #d4af37;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
+}
+
+.wc-title-box h2 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #fff, #d4af37);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.wc-title-box p {
+  color: #a0aec0;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.wc-countdown {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  z-index: 1;
+}
+
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 12px;
+  min-width: 90px;
+  backdrop-filter: blur(10px);
+}
+
+.time-block .val {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums; /* Prevents text jumping left/right during ticking */
+}
+
+.time-block .lbl {
+  font-size: 0.7rem;
+  color: #d4af37;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+
+.wc-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.inline-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #00ff80;
+  border-radius: 50%;
+  animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); }
+}
+/* --- WORLD CUP HISTORY PAGE --- */
+.history-page {
+  animation: modalIn 0.3s ease-out;
+  padding: 20px 0;
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a0aec0;
+  padding: 10px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transform: translateX(-5px);
+}
+
+.history-title-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-title-area h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #fff, #d4af37);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.history-title-area p {
+  color: #a0aec0;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 25px;
+}
+
+.history-card {
+  background: rgba(12, 18, 30, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.history-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+}
+
+.h-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 15px;
+}
+
+.year-badge-hc {
+  background: linear-gradient(135deg, #d4af37, #aa8529);
+  color: #000;
+  font-weight: 900;
+  padding: 5px 15px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+.host-country {
+  color: #718096;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.final-match-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.h-team {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.h-team.runner {
+  justify-content: flex-end;
+  color: #a0aec0;
+}
+
+.h-score-hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.fin-score {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #d4af37;
+  white-space: nowrap;
+}
+
+.decider {
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: #718096;
+  font-weight: 800;
+  margin-top: 5px;
+}
+
+.notable-moment {
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
 }
