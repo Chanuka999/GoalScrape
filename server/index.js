@@ -28,6 +28,21 @@ app.get('/api/matches', (req, res) => {
         });
 });
 
+// GET World Cup History
+app.get('/api/history', (req, res) => {
+    const historyFile = path.join(__dirname, '../data/fifa_history.json');
+    if (!fs.existsSync(historyFile)) {
+        return res.json({ success: true, data: [] });
+    }
+    try {
+        const raw = fs.readFileSync(historyFile);
+        const parsed = JSON.parse(raw);
+        res.json({ success: true, data: parsed });
+    } catch(e) {
+        res.json({ success: false, data: [] });
+    }
+});
+
 // Trigger Scraper
 app.post('/api/scrape', (req, res) => {
     const scriptPath = path.join(__dirname, '../scraper/main.py');
