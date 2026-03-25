@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { io } from "socket.io-client";
 import {
   Trophy,
   Search,
@@ -267,8 +268,19 @@ const App = () => {
 
   useEffect(() => {
     fetchMatches();
-    const interval = setInterval(fetchMatches, 60000);
-    return () => clearInterval(interval);
+    
+    // Connect to WebSocket server for real-time live updates
+    const socket = io("http://localhost:5000");
+    
+    socket.on("matches_update", (updatedMatches) => {
+      console.log("Received live matches update via WebSockets");
+      setMatches(updatedMatches);
+      setLastUpdated(new Date().toLocaleTimeString());
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
