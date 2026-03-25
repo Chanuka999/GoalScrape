@@ -26,7 +26,12 @@ Automate the extraction of live football data using Selenium.
 ### 1. Scraper (Python)
 ```bash
 pip install -r requirements.txt
+
+# Run once normally:
 python scraper/main.py
+
+# Or run automatically in the background (every minute):
+python scraper/main.py --background --headless
 ```
 
 ### 2. Backend (Node.js)
