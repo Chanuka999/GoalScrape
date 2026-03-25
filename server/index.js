@@ -4,14 +4,48 @@ const fs = require('fs');
 const path = require('path');
 const csv = require('csv-parser');
 const { exec } = require('child_process');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
 const PORT = 5000;
+
+const io = new Server(server, {
+    cors: {
+        origin: "*", // allow React frontend to connect
+        methods: ["GET", "POST"]
+    }
+});
 
 app.use(cors());
 app.use(express.json());
 
 const CSV_FILE = path.join(__dirname, '../data/live_matches.csv');
+
+// WebSockets Connection
+io.on('connection', (socket) => {
+    console.log('New client connected via WebSockets');
+    socket.on('disconnect', () => {
+        console.log('Client disconnected from WebSockets');
+    });
+});
+
+// Watch CSV file for changes and broadcast
+fs.watchFile(CSV_FILE, { interval: 1000 }, (curr, prev) => {
+    if (curr.mtimeMs !== prev.mtimeMs) {
+        const results = [];
+        if (!fs.existsSync(CSV_FILE)) return;
+        
+        fs.createReadStream(CSV_FILE)
+            .pipe(csv())
+            .on('data', (data) => results.push(data))
+            .on('end', () => {
+                console.log('[WebSocket] Sending updated matches to all clients');
+                io.emit('matches_update', results);
+            });
+    }
+});
 
 // GET all matches from CSV
 app.get('/api/matches', (req, res) => {
@@ -83,6 +117,6 @@ app.get('/api/lineups/:id', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:5000`);
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:5000 (with WebSockets)`);
 });
