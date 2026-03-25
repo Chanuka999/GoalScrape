@@ -95,8 +95,12 @@ class FootballScraper:
         except Exception as e:
             print(f"Error: {e}")
             return []
-        finally:
+
+    def close(self):
+        try:
             self.driver.quit()
+        except:
+            pass
 
     def save_to_csv(self, data, filename="live_matches.csv"):
         if not data:
@@ -116,6 +120,27 @@ class FootballScraper:
         print(f"SUCCESS: Saved {len(df)} matches with IDs.")
 
 if __name__ == "__main__":
-    scraper = FootballScraper(headless=False)
-    live_data = scraper.scrape_flashscore_live()
-    scraper.save_to_csv(live_data)
+    import argparse
+    parser = argparse.ArgumentParser(description="GoalScrape Football Scraper")
+    parser.add_argument("--background", action="store_true", help="Run continuously in the background")
+    parser.add_argument("--headless", action="store_true", help="Run browser in headless mode")
+    args = parser.parse_args()
+
+    scraper = FootballScraper(headless=args.headless or args.background)
+    
+    try:
+        if args.background:
+            print("Starting background automated scraper. Scraping every 60 seconds...")
+            while True:
+                print("\n[Background Job] Fetching live data...")
+                live_data = scraper.scrape_flashscore_live()
+                scraper.save_to_csv(live_data)
+                print("[Background Job] Waiting 60 seconds before next scrape...")
+                time.sleep(60)
+        else:
+            live_data = scraper.scrape_flashscore_live()
+            scraper.save_to_csv(live_data)
+    except KeyboardInterrupt:
+        print("\nStopping scraper...")
+    finally:
+        scraper.close()
